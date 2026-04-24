@@ -1,0 +1,4 @@
+# 项目排除路径
+/auth-service/target/
+/services/order-service/target/
+/services/stock-service/target/
