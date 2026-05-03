@@ -5,12 +5,7 @@ import com.zzl.stockservice.entity.Stock;
 
 import java.util.List;
 
-/**
- * 库存服务接口
- *
- * @author micro
- * @since 1.0.0
- */
+
 public interface StockService {
 
     /**

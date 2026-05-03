@@ -21,29 +21,52 @@ import java.util.List;
 @RequiredArgsConstructor
 public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements StockService {
 
+    //重复三次
     private static final int RETRY_COUNT = 3;
 
+    /**
+     * 下订单时锁库存
+     * @param productId 商品ID
+     * @param quantity  锁定数量
+     * @param orderNo   订单号
+     * @return
+     */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public StockLockResult lockStock(Long productId, Integer quantity, String orderNo) {
         for (int i = 0; i < RETRY_COUNT; i++) {
+
+            //获取库存
             Stock stock = lambdaQuery().eq(Stock::getProductId, productId).one();
+
             if (stock == null) {
                 log.warn("商品不存在，productId: {}", productId);
                 // 正常业务失败，返回结果，不抛异常
                 return buildFailResult(productId, "商品不存在");
             }
 
-            int available = stock.getTotalStock() - stock.getLockedStock();
+            int available = stock.getTotalStock() - stock.getLockedStock() - stock.getSoldStock();
             if (available < quantity) {
                 log.warn("库存不足，productId: {}, 可用库存: {}, 请求数量: {}", productId, available, quantity);
                 return buildFailResult(productId, "库存不足，剩余可用库存: " + available, available);
             }
 
+            //这个时候锁库存的时候比较Version,即.eq(Stock::getVersion, stock.getVersion())
+            //看进程执行期间有没有其他人子在锁库存，当version不相同的时候说明之前有人在进程期间里锁库存
+            //抛弃现在的旧数据，重新获取库存信息以便LockedStock是并发进程之间的堆加而不是覆盖
+            //同时也是为了获取最新的剩余可使用库存
+
+            //并发优化，直接在数据库中实现locked_stock自增quantity，
+            //lockStock 线程 A 读取：locked_stock=100, version=1，准备锁定 50。
+            //confirmStock 线程 B 正好在a完成锁库前执行，locked_stock-30=70
+            //由于使用旧数据stock.getLockedStock更新，即注入数据库的数据为100+50=150
+            //实际应该是120，现在使用直接在数据库中实现locked_stock自增quantity，
+            //及放弃了使用stock.getLockedStock旧数据
+            // 避免与confirmStock，unlockStock方法的LockedStock加减起冲突
             boolean updated = lambdaUpdate()
                     .eq(Stock::getProductId, productId)
                     .eq(Stock::getVersion, stock.getVersion())
-                    .set(Stock::getLockedStock, stock.getLockedStock() + quantity)
+                    .setSql("locked_stock = locked_stock + " + quantity + ", version = version + 1")
                     .update();
 
             if (updated) {
@@ -52,13 +75,23 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
             }
             log.debug("库存锁定乐观锁冲突，重试第{}次", i + 1);
         }
+
         // 重试耗尽，系统错误，抛异常
         log.error("锁定库存失败，超过重试次数，productId: {}", productId);
         throw new StockException(500, "系统繁忙，请稍后重试");
     }
 
+
+    /**
+     * 用户支付之后减少锁定库存的数量
+     * 怎加售出量
+     * @param productId 商品ID
+     * @param quantity  扣减数量
+     * @param orderNo   订单号
+     * @return 成功-true
+     */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean confirmStock(Long productId, Integer quantity, String orderNo) {
         boolean updated = lambdaUpdate()
                 .eq(Stock::getProductId, productId)
@@ -74,8 +107,16 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         }
     }
 
+    /**
+     * 用户撤销订单
+     * 减少锁定库存的数量
+     * @param productId 商品ID
+     * @param quantity  解锁数量
+     * @param orderNo   订单号
+     * @return
+     */
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @Transactional
     public boolean unlockStock(Long productId, Integer quantity, String orderNo) {
         boolean updated = lambdaUpdate()
                 .eq(Stock::getProductId, productId)
@@ -95,6 +136,8 @@ public class StockServiceImpl extends ServiceImpl<StockMapper, Stock> implements
         return lambdaQuery().eq(Stock::getProductId, productId).one();
     }
 
+
+    //在上锁的的时候这里如果返回是null会抛异常，这里就不重复校验有没有返回订单了
     @Override
     public List<Stock> batchGetStock(List<Long> productIds) {
         return lambdaQuery().in(Stock::getProductId, productIds).list();

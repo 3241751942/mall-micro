@@ -27,7 +27,12 @@ public class StockController {
         Stock stock = stockService.getStockByProductId(productId);
         StockVO vo = new StockVO();
         vo.setProductId(productId);
-        vo.setAvailableStock(stock != null ? stock.getTotalStock() - stock.getLockedStock() : 0);
+        if (stock != null) {
+            int available = stock.getTotalStock() - stock.getLockedStock() - stock.getSoldStock();
+            vo.setAvailableStock(Math.max(available, 0));
+        } else {
+            vo.setAvailableStock(0);
+        }
         return Result.success(vo);
     }
 }

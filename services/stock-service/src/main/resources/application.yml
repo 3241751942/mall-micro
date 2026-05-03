@@ -28,7 +28,10 @@ spring:
         file-extension: yaml
         namespace: public
 
+
 mybatis-plus:
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl
   global-config:
     db-config:
       logic-not-delete-value: 0
