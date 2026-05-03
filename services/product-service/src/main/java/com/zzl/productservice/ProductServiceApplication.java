@@ -8,8 +8,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.springframework.transaction.annotation.Transactional;
 
 @SpringBootApplication
-@EnableFeignClients
-@EnableTransactionManagement
+@Transactional
 @MapperScan("com.zzl.productservice.mapper")
 public class ProductServiceApplication {
 

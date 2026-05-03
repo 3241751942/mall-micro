@@ -1,6 +1,7 @@
 package com.zzl.productservice.service.impl;
 
 
+import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzl.productservice.Exception.CategoryException;
@@ -29,7 +30,13 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
         LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
         wrapper.orderByAsc(Category::getSort, Category::getId);
         return list(wrapper);
+        //remove()
+        //update()
+        //list()
+        //getOne()
+        //save()
     }
+
 
     /**
      * 新增分类

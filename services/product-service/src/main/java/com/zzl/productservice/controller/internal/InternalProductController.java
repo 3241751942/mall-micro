@@ -1,7 +1,7 @@
 package com.zzl.productservice.controller.internal;
 
 
-import com.zzl.commonapi.dto.product.ProductInternalDTO;
+import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
 import com.zzl.productservice.converter.ProductConverter;
 import com.zzl.productservice.entity.Product;
 import com.zzl.productservice.service.ProductService;

@@ -1,6 +1,6 @@
 package com.zzl.productservice.converter;
 
-import com.zzl.commonapi.dto.product.ProductInternalDTO;
+import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
 import com.zzl.productservice.entity.ProductResponseDTO;
 import com.zzl.productservice.dto.request.ProductCreateRequest;
 import com.zzl.productservice.dto.request.ProductUpdateRequest;

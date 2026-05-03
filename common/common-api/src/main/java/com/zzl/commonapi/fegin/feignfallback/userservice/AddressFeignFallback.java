@@ -14,7 +14,6 @@ public class AddressFeignFallback implements FallbackFactory<AddressFeignClient>
             @Override
             public AddressInternalDTO getDefaultAddress(Long userId){
                 return null;
-
             }
             @Override
             public List<AddressInternalDTO> getUserAddresses(Long userId){
