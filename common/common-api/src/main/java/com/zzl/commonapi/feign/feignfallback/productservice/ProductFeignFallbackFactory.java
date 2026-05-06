@@ -1,7 +1,7 @@
-package com.zzl.commonapi.fegin.feignfallback.productservice;
+package com.zzl.commonapi.feign.feignfallback.productservice;
 
 import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
-import com.zzl.commonapi.fegin.productservicefeign.ProductFeignClient;
+import com.zzl.commonapi.feign.productservicefeign.ProductFeignClient;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;

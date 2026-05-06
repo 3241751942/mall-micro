@@ -1,7 +1,7 @@
-package com.zzl.commonapi.fegin.feignfallback.userservice;
+package com.zzl.commonapi.feign.feignfallback.userservice;
 
 import com.zzl.commonapi.dto.userservicedto.AddressInternalDTO;
-import com.zzl.commonapi.fegin.userservicefeign.AddressFeignClient;
+import com.zzl.commonapi.feign.userservicefeign.AddressFeignClient;
 import org.springframework.cloud.openfeign.FallbackFactory;
 
 import java.util.List;

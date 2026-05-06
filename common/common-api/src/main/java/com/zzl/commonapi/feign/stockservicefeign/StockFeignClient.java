@@ -1,10 +1,10 @@
-package com.zzl.commonapi.fegin.stockservicefeign;
+package com.zzl.commonapi.feign.stockservicefeign;
 
 
 import com.zzl.commonapi.dto.stockservicedto.StockDTO;
 import com.zzl.commonapi.dto.stockservicedto.StockLockRequest;
 import com.zzl.commonapi.dto.stockservicedto.StockLockResult;
-import com.zzl.commonapi.fegin.feignfallback.stockservice.StockFeignFallbackFactory;
+import com.zzl.commonapi.feign.feignfallback.stockservice.StockFeignFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;

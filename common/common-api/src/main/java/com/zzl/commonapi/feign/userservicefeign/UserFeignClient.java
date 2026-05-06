@@ -1,7 +1,7 @@
-package com.zzl.commonapi.fegin.userservicefeign;
+package com.zzl.commonapi.feign.userservicefeign;
 
 import com.zzl.commonapi.dto.userservicedto.*;
-import com.zzl.commonapi.fegin.feignfallback.userservice.UserFeignFallback;
+import com.zzl.commonapi.feign.feignfallback.userservice.UserFeignFallback;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name="user-service",path="/internal/users", fallbackFactory = UserFeignFallback.class)
+@FeignClient(name="user-service",path="/internal/users",contextId = "address", fallbackFactory = UserFeignFallback.class)
 public interface UserFeignClient {
 
 

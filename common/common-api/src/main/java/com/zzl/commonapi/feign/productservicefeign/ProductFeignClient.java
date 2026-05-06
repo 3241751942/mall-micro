@@ -1,7 +1,7 @@
-package com.zzl.commonapi.fegin.productservicefeign;
+package com.zzl.commonapi.feign.productservicefeign;
 
 import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
-import com.zzl.commonapi.fegin.feignfallback.productservice.ProductFeignFallbackFactory;
+import com.zzl.commonapi.feign.feignfallback.productservice.ProductFeignFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
