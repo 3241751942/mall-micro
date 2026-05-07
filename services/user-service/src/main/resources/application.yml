@@ -9,18 +9,21 @@ spring:
     date-format: yyyy-MM-dd HH:mm:ss
     time-zone: GMT+8
 
-  config:
-    import: nacos:user-service.yml
 
   cloud:
     nacos:
       discovery:
+        username: nacos
+        password: nacos
         server-addr: 127.0.0.1:8848
         namespace: public
       config:
+        enabled: false
         server-addr: 127.0.0.1:8848
         file-extension: yaml
         namespace: public
+        username: nacos
+        password: nacos
 
 
   datasource:
@@ -38,3 +41,14 @@ mybatis-plus:
       logic-delete-field: deleted
       logic-delete-value: 1
       logic-not-delete-value: 0
+
+seata:
+  enabled: true
+  tx-service-group: default_tx_group
+  registry:
+    type: file   # 改用 file 类型，不通过 Nacos 发现
+  service:
+    grouplist:
+      default: 127.0.0.1:8091   # 直连宿主机的8091端口
+    vgroup-mapping:
+      default_tx_group: default

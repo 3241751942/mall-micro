@@ -7,8 +7,6 @@ import com.zzl.orderservice.converter.OrderConverter;
 import com.zzl.orderservice.dto.request.CancelOrderRequest;
 import com.zzl.orderservice.dto.request.CreateOrderRequest;
 import com.zzl.orderservice.dto.response.OrderResponse;
-import com.zzl.orderservice.entity.Order;
-import com.zzl.orderservice.entity.OrderItem;
 import com.zzl.orderservice.entity.OrderWithItems;
 import com.zzl.orderservice.exception.OrderException;
 import com.zzl.orderservice.service.OrderService;
@@ -16,10 +14,7 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+
 
 
 @RestController
