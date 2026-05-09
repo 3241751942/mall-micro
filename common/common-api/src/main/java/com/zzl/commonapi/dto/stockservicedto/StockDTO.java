@@ -30,7 +30,7 @@ public class StockDTO {
     private Integer soldStock;
 
     /**
-     * 可用库存 即 totalStock - lockedStock
+     * 可用库存  即totalStock - lockedStock - soldStock
      */
     private Integer availableStock;
 }
