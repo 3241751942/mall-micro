@@ -22,5 +22,5 @@ public interface ProductService extends IService<Product> {
 
     List<Product> batchGetProducts(List<Long> productIds);
 
-    Page<ProductResponseDTO> pageQuery(@Valid ProductPageRequest request);
+    Page<ProductResponseDTO> pageQuery(ProductPageRequest request);
 }

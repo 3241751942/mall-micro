@@ -68,4 +68,6 @@ public interface OrderService {
      * @return 分页的订单及明细组合对象
      */
     Page<OrderWithItems> pageOrdersWithItems(Long userId, Integer status, Integer pageNum, Integer pageSize);
+
+    void setOrderStatus(Integer status, String orderNo);
 }

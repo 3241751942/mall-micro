@@ -12,6 +12,7 @@ import com.zzl.userservice.dto.response.UserInfoResponse;
 import com.zzl.userservice.entity.User;
 import com.zzl.userservice.service.UserService;
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -101,7 +102,7 @@ public class UserController {
      */
     @GetMapping("/admin/users")
     public Result<Page<UserInfoResponse>> listUsers(
-            @RequestParam(defaultValue = "1") @Min(1) Integer pageNum,
+            @RequestParam(defaultValue = "1") @Min(1) @Max(100) Integer pageNum,
             @RequestParam(defaultValue = "10") @Min(1) Integer pageSize,
             @RequestParam(required = false) String username,
             @RequestParam(required = false) Integer status) {

@@ -30,15 +30,13 @@ public class InternalStockController {
     }
 
     @PostMapping("/confirm")
-    public Result<Void> confirm(@RequestBody @Valid StockLockRequest request) {
-        boolean success = stockService.confirmStock(request.getProductId(), request.getQuantity(), request.getOrderNo());
-        return success ? Result.success() : Result.error("确认扣减失败");
+    public boolean confirm(@RequestBody @Valid StockLockRequest request) {
+        return stockService.confirmStock(request.getProductId(), request.getQuantity(), request.getOrderNo());
     }
 
     @PostMapping("/unlock")
-    public Result<Void> unlock(@RequestBody @Valid StockLockRequest request) {
-        boolean success = stockService.unlockStock(request.getProductId(), request.getQuantity(), request.getOrderNo());
-        return success ? Result.success() : Result.error("解锁失败");
+    public boolean unlock(@RequestBody @Valid StockLockRequest request) {
+        return stockService.unlockStock(request.getProductId(), request.getQuantity(), request.getOrderNo());
     }
 
     @PostMapping("/batch")

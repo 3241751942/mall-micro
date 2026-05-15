@@ -48,7 +48,7 @@ public class AdminOrderController {
     @PutMapping("/{orderNo}/status")
     public Result<Void> updateOrderStatus(@PathVariable String orderNo,
                                           @RequestParam Integer status) {
-
+        orderService.setOrderStatus(status,orderNo);
         return Result.success();
     }
 }

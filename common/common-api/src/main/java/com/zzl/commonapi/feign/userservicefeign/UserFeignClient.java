@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 import java.util.List;
 
-@FeignClient(name="user-service",path="/internal/users",contextId = "address", fallbackFactory = UserFeignFallback.class)
+@FeignClient(name="user-service",path="/internal/users",contextId = "user", fallbackFactory = UserFeignFallback.class)
 public interface UserFeignClient {
 
 

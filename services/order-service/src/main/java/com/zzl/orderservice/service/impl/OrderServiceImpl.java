@@ -1,6 +1,7 @@
 package com.zzl.orderservice.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
@@ -56,7 +57,6 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
     @Override
     @GlobalTransactional(rollbackFor = Exception.class)
-    @Transactional(rollbackFor = Exception.class)
     public String createOrder(CreateOrderRequest request) {
         // 批量获取商品信息
         List<Long> productIds = request.getItems().stream()
@@ -154,11 +154,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     }
 
     @Override
-    @Transactional(rollbackFor = Exception.class)
+    @GlobalTransactional(rollbackFor = Exception.class)
     public void cancelOrder(String orderNo, Long userId) {
         Order order = lambdaQuery()
                 .eq(Order::getOrderNo, orderNo)
-                .eq(userId != null, Order::getUserId, userId)
+                .eq(Order::getUserId, userId)
                 .one();
         if (order == null) {
             throw new OrderException("订单不存在");
@@ -186,8 +186,8 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         log.info("订单取消成功，订单号: {}", orderNo);
     }
 
+    @GlobalTransactional(rollbackFor = Exception.class)
     @Override
-    @Transactional(rollbackFor = Exception.class)
     public void handlePayCallback(String orderNo, Integer payStatus) {
         Order order = lambdaQuery().eq(Order::getOrderNo, orderNo).one();
         if (order == null) {
@@ -259,5 +259,21 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 .collect(Collectors.toList());
         resultPage.setRecords(records);
         return resultPage;
+    }
+
+    @Override
+    public void setOrderStatus(Integer status, String orderNo) {
+        Order order = lambdaQuery().eq(Order::getOrderNo, orderNo).one();
+        if (order == null) {
+            throw new OrderException("订单不存在");
+        }
+        Boolean result=lambdaUpdate().eq(Order::getOrderNo, orderNo).set(Order::getStatus, status).update();
+        if (!result) {
+            throw new OrderException("系统繁忙中，订单修改失败");
+        }
+//        order.setStatus(status);
+//        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+//        wrapper.eq(Order::getOrderNo, orderNo);
+//        update(order, wrapper);
     }
 }

@@ -21,7 +21,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> implements ProductService {
 
-    ProductMapper productMapper;
+    private final ProductMapper productMapper;
 
 
     @Override

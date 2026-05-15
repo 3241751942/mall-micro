@@ -1,0 +1,72 @@
+server:
+  port: 8994
+spring:
+  main:
+    allow-circular-references: true
+
+  application:
+    name: gateway-service
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        password: nacos
+        username: nacos
+    gateway:
+      # 全局配置
+      server:
+        webflux:
+          default-filters:
+            - StripPrefix=0   # 保持原路径
+          routes:
+            # 用户服务
+            - id: user-service
+              uri: lb://user-service
+              predicates:
+                - Path=/api/users/**,path=/api/addresses/**
+            # 商品服务
+            - id: product-service
+              uri: lb://product-service
+              predicates:
+                - Path=/api/products/**,/api/categories/**,/api/brands/**
+            # 购物车服务
+            - id: cart-service
+              uri: lb://cart-service
+              predicates:
+                - Path=/api/cart/**
+            # 订单服务
+            - id: order-service
+              uri: lb://order-service
+              predicates:
+                - Path=/api/orders/**,/api/admin/orders/**
+            # 支付服务
+            - id: payment-service
+              uri: lb://payment-service
+              predicates:
+                - Path=/api/payments/**
+            # 认证服务（对外登录）
+            - id: auth-service
+              uri: lb://auth-service
+              predicates:
+                - Path=/auth/**,/internal/auth/**
+            # 通知服务
+            - id: notify-service
+              uri: lb://notify-service
+              predicates:
+                - Path=/api/notify/**
+            # 搜索服务
+            - id: search-service
+              uri: lb://search-service
+              predicates:
+                - Path=/api/search/**
+    sentinel:
+      transport:
+        dashboard: localhost:8858   # Sentinel 控制台地址（可选）
+      filter:
+        enabled: true
+
+# 白名单路径（不需要认证）
+gateway:
+  whitelist:
+    - /auth/login
+    - /api/users/register

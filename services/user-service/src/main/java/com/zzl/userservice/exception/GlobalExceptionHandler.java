@@ -36,4 +36,8 @@ public class GlobalExceptionHandler {
 
         return Result.error(e.getCode(), e.getMessage());
     }
+    @ExceptionHandler(UserNotFoundException.class)
+    public Result<Void> UserNotFoundException(UserNotFoundException e) {
+        return Result.error(400, e.getMessage());
+    }
 }
