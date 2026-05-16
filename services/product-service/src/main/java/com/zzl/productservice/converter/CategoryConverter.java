@@ -5,8 +5,10 @@ import com.zzl.productservice.dto.request.CategoryCreateRequest;
 import com.zzl.productservice.dto.request.CategoryUpdateRequest;
 import com.zzl.productservice.dto.response.CategoryResponse;
 import com.zzl.productservice.entity.Category;
+import com.zzl.productservice.entity.CategoryTree;
 import org.springframework.beans.BeanUtils;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -46,35 +48,30 @@ public class CategoryConverter {
     }
 
     /**
-     * 实体 → 树节点 VO
-     *
-     * @param category 分类实体
-     * @return 分类树节点
+     * 单个 CategoryTree → CategoryResponse
      */
-    public static CategoryResponse toTreeNode(Category category) {
-        if (category == null) {
-            return null;
+    public static CategoryResponse toTreeNode(CategoryTree treeNode) {
+        CategoryResponse response = new CategoryResponse();
+        response.setId(treeNode.getId());
+        response.setName(treeNode.getName());
+        response.setLevel(treeNode.getLevel());
+        response.setSort(treeNode.getSort());
+
+        // 递归转换子节点
+        if (treeNode.getChildren() != null && !treeNode.getChildren().isEmpty()) {
+            response.setChildren(toTreeNodeList(treeNode.getChildren()));
         }
-        CategoryResponse node = new CategoryResponse();
-        node.setId(category.getId());
-        node.setName(category.getName());
-        node.setLevel(category.getLevel());
-        node.setSort(category.getSort());
-        node.setChildren(Collections.emptyList()); // 后续递归填充
-        return node;
+        return response;
     }
 
     /**
-     * 实体列表 → 树节点列表
-     *
-     * @param categories 分类实体列表
-     * @return 树节点列表
+     * 树列表转换
      */
-    public static List<CategoryResponse> toTreeNodeList(List<Category> categories) {
-        if (categories == null || categories.isEmpty()) {
-            return Collections.emptyList();
+    public static List<CategoryResponse> toTreeNodeList(List<CategoryTree> treeList) {
+        if (treeList == null || treeList.isEmpty()) {
+            return new ArrayList<>();
         }
-        return categories.stream()
+        return treeList.stream()
                 .map(CategoryConverter::toTreeNode)
                 .collect(Collectors.toList());
     }

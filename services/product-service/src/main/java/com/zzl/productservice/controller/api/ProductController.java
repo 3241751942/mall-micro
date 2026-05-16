@@ -33,13 +33,13 @@ public class ProductController {
      * @param request 分页请求参数（页码、每页条数、筛选条件、排序字段）
      * @return 分页商品数据，包含商品简要信息及分类名称、品牌名称
      */
-    @GetMapping("/page")
-    public Result<Page<ProductResponse>> pageQuery(@Valid ProductPageRequest request) {
+    @PostMapping("/page")
+    public Result<Page<ProductResponse>> pageQuery(@Valid @RequestBody ProductPageRequest request) {
         Page<ProductResponseDTO> page= productService.pageQuery(request);
         Page<ProductResponse> resultPage =new Page<>(
                 page.getCurrent(),
-                page.getTotal(),
-                page.getSize()
+                page.getSize(),
+                page.getTotal()
         );
 
         resultPage.setRecords(

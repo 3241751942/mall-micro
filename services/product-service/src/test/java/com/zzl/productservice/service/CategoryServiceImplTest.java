@@ -3,6 +3,7 @@ package com.zzl.productservice.service;
 
 import com.zzl.productservice.Exception.CategoryException;
 import com.zzl.productservice.entity.Category;
+import com.zzl.productservice.entity.CategoryTree;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -51,7 +52,7 @@ class CategoryServiceImplTest {
     @Test
     @DisplayName("获取分类树 - 返回所有分类并按排序和ID排序")
     void testGetCategoryTree() {
-        List<Category> tree = categoryService.getCategoryTree();
+        List<CategoryTree> tree = categoryService.getCategoryTree();
         assertThat(tree).hasSize(2);
         // 验证排序：sort小的在前，相同sort则id小的在前
         assertThat(tree.get(0).getName()).isEqualTo("电子产品");

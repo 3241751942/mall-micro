@@ -48,7 +48,7 @@ spring:
             - id: auth-service
               uri: lb://auth-service
               predicates:
-                - Path=/auth/**,/internal/auth/**
+                - Path=/api/auth/**,/internal/auth/**
             # 通知服务
             - id: notify-service
               uri: lb://notify-service
@@ -68,5 +68,12 @@ spring:
 # 白名单路径（不需要认证）
 gateway:
   whitelist:
-    - /auth/login
+    - /api/auth/login
+    - /api/auth/logout
+    - /internal/auth//verify
     - /api/users/register
+    - /api/products/page
+    - /api/products/**        # 商品详情等
+    - /api/categories/tree
+    - /api/brands
+    - /api/stocks/**

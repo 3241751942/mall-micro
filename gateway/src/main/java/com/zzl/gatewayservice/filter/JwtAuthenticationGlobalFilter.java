@@ -3,7 +3,6 @@ package com.zzl.gatewayservice.filter;
 import com.zzl.commonapi.dto.authservicedto.TokenVerifyResponse;
 import com.zzl.commonapi.feign.authservicefeign.AuthFeignClient;
 import com.zzl.gatewayservice.config.GatewayWhitelistProperties;
-import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
@@ -25,6 +24,7 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
     private final AuthFeignClient authFeignClient;
     private final GatewayWhitelistProperties gatewayWhitelistProperties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+
 
     @Autowired
     public JwtAuthenticationGlobalFilter(@Lazy AuthFeignClient authFeignClient,

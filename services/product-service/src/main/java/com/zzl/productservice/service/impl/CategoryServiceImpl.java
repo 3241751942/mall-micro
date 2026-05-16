@@ -1,11 +1,11 @@
 package com.zzl.productservice.service.impl;
 
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzl.productservice.Exception.CategoryException;
 import com.zzl.productservice.entity.Category;
+import com.zzl.productservice.entity.CategoryTree;
 import com.zzl.productservice.enums.ProductServiceBizErrorCode;
 import com.zzl.productservice.mapper.CategoryMapper;
 import com.zzl.productservice.service.CategoryService;
@@ -13,7 +13,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 /**
  * 分类服务实现类
@@ -22,19 +25,69 @@ import java.util.List;
 public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> implements CategoryService {
 
     /**
-     * 获取整个分类树
+     * 获取整个分类树(最多三层)
      */
-    @Override
-    @Transactional(readOnly = true)
-    public List<Category> getCategoryTree() {
-        LambdaQueryWrapper<Category> wrapper = new LambdaQueryWrapper<>();
-        wrapper.orderByAsc(Category::getSort, Category::getId);
-        return list(wrapper);
-        //remove()
+    public List<CategoryTree> getCategoryTree() {
+        // 1. 查询所有未删除、1-3级分类，并按排序号升序
+        List<Category> categoryList = lambdaQuery()
+                .in(Category::getLevel, 1, 2, 3)
+                .eq(Category::getDeleted, 0)
+                .orderByAsc(Category::getSort)
+                .list();
+
+        // 2. 构建树形结构
+        return buildCategoryTree(categoryList);
+    //remove()
         //update()
         //list()
         //getOne()
         //save()
+    }
+
+    /**
+     * 核心：扁平列表 → 三级 CategoryTree 树形结构
+     */
+    private List<CategoryTree> buildCategoryTree(List<Category> categoryList) {
+        // 第一步：把所有 Category 转成 CategoryTree
+        List<CategoryTree> allNodes = categoryList.stream().map(cat -> {
+            CategoryTree treeNode = new CategoryTree();
+            treeNode.setId(cat.getId());
+            treeNode.setName(cat.getName());
+            treeNode.setLevel(cat.getLevel());
+            treeNode.setSort(cat.getSort());
+            treeNode.setChildren(new ArrayList<>());
+            return treeNode;
+        }).toList();
+
+        // 建立 ID -> 节点 的映射
+        Map<Long, CategoryTree> nodeMap = allNodes.stream()
+                .collect(Collectors.toMap(CategoryTree::getId, node -> node));
+
+        List<CategoryTree> resultTree = new ArrayList<>();
+
+        // 遍历组装父子关系
+        for (CategoryTree node : allNodes) {
+            // 找到当前节点对应的原始分类数据
+            Category currentCat = categoryList.stream()
+                    .filter(c -> c.getId().equals(node.getId()))
+                    .findFirst().orElse(null);
+
+            if (currentCat == null) continue;
+
+            Long parentId = currentCat.getParentId();
+
+            // parentId = 0 或 null → 一级分类
+            if (parentId == null || parentId == 0) {
+                resultTree.add(node);
+            } else {
+                // 找到父节点，把自己挂进去
+                CategoryTree parentNode = nodeMap.get(parentId);
+                if (parentNode != null) {
+                    parentNode.getChildren().add(node);
+                }
+            }
+        }
+        return resultTree;
     }
 
 

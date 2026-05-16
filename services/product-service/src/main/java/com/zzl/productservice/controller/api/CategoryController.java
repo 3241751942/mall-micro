@@ -6,6 +6,7 @@ import com.zzl.commoncore.result.Result;
 import com.zzl.productservice.converter.CategoryConverter;
 import com.zzl.productservice.dto.response.CategoryResponse;
 import com.zzl.productservice.entity.Category;
+import com.zzl.productservice.entity.CategoryTree;
 import com.zzl.productservice.service.CategoryService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -30,7 +31,7 @@ public class CategoryController {
      */
     @GetMapping("/tree")
     public Result<List<CategoryResponse>> getTree() {
-        List<Category> tree = categoryService.getCategoryTree();
+        List<CategoryTree> tree = categoryService.getCategoryTree();
 
         return Result.success(CategoryConverter.toTreeNodeList(tree));
     }
