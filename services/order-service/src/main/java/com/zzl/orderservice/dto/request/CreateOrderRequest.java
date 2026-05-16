@@ -15,9 +15,8 @@ import java.util.List;
 public class CreateOrderRequest {
 
     /**
-     * 用户ID（实际开发中可从请求头获取，这里为了测试简单直接传递）
+     * 用户ID
      */
-    @NotNull(message = "用户ID不能为空")
     private Long userId;
 
     /**
