@@ -29,5 +29,5 @@ public interface PaymentService extends IService<Payment> {
      * @param paymentNo 支付单号
      * @return 更新后的支付单实体
      */
-    Payment mockPaySuccess(String paymentNo);
+    Payment mockPaySuccess(String paymentNo, String orderNo);
 }

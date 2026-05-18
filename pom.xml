@@ -23,6 +23,7 @@
         <module>auth-service</module>
         <module>notify-service</module>
         <module>search-service</module>
+        <module>system-service</module>
     </modules>
 
     <packaging>pom</packaging>

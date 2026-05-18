@@ -92,4 +92,11 @@ public class OrderController {
         orderService.cancelOrder(request.getOrderNo(), userId);
         return Result.success();
     }
+
+
+    @GetMapping("/orderId/{orderNo}")
+    public Result<Long> getOrderId(@PathVariable String orderNo){
+        Long id=orderService.getOrderId(orderNo);
+        return Result.success(id);
+    }
 }

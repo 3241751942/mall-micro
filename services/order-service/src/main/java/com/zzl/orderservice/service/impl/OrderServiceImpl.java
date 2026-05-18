@@ -276,4 +276,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 //        wrapper.eq(Order::getOrderNo, orderNo);
 //        update(order, wrapper);
     }
+
+    @Override
+    public Long getOrderId(String orderNo) {
+        LambdaQueryWrapper<Order> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(Order::getOrderNo, orderNo);
+        Order order = this.getOne(wrapper);
+        if (order == null) {
+            throw new RuntimeException("订单不存在，订单号：" + orderNo);
+        }
+        return order.getId();
+    }
 }

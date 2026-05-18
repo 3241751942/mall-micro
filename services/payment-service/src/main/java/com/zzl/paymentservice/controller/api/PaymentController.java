@@ -42,8 +42,8 @@ public class PaymentController {
      * 模拟支付成功（开发测试用）
      */
     @PostMapping("/mock-callback")
-    public Result<Void> mockCallback(@RequestParam String paymentNo) {
-        paymentService.mockPaySuccess(paymentNo);
+    public Result<Void> mockCallback(@RequestParam String paymentNo, @RequestParam String orderNo) {
+        paymentService.mockPaySuccess(paymentNo,orderNo);
         return Result.success();
     }
 }

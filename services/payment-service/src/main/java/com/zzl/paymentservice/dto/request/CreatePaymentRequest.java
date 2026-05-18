@@ -12,7 +12,7 @@ import java.math.BigDecimal;
 public class CreatePaymentRequest {
 
     /**
-     * 订单ID，不能为空
+     * 订单号，不能为空
      */
     @NotNull(message = "订单ID不能为空")
     private Long orderId;

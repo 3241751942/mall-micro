@@ -16,8 +16,6 @@ spring:
       # 全局配置
       server:
         webflux:
-          default-filters:
-            - StripPrefix=0   # 保持原路径
           routes:
             # 用户服务
             - id: user-service

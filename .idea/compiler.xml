@@ -10,6 +10,7 @@
         <module name="stock-service" />
         <module name="common-security" />
         <module name="cart-service" />
+        <module name="system-service" />
         <module name="product-service" />
         <module name="user-service" />
         <module name="notify-service" />
@@ -40,6 +41,7 @@
       <module name="search-service" options="-parameters" />
       <module name="services" options="" />
       <module name="stock-service" options="-parameters" />
+      <module name="system-service" options="-parameters" />
       <module name="user-service" options="-parameters" />
     </option>
   </component>

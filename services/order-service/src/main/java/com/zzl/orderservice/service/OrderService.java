@@ -70,4 +70,6 @@ public interface OrderService {
     Page<OrderWithItems> pageOrdersWithItems(Long userId, Integer status, Integer pageNum, Integer pageSize);
 
     void setOrderStatus(Integer status, String orderNo);
+
+    Long getOrderId(String orderNo);
 }
