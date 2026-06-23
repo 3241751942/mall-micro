@@ -10,7 +10,6 @@
         <module name="stock-service" />
         <module name="common-security" />
         <module name="cart-service" />
-        <module name="system-service" />
         <module name="product-service" />
         <module name="user-service" />
         <module name="notify-service" />
@@ -18,11 +17,15 @@
         <module name="auth-service" />
         <module name="payment-service" />
         <module name="search-service" />
+        <module name="log-service" />
         <module name="order-service" />
         <module name="gateway" />
         <module name="common-core" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="system-service" target="21" />
+    </bytecodeTargetLevel>
   </component>
   <component name="JavacSettings">
     <option name="ADDITIONAL_OPTIONS_OVERRIDE">
@@ -33,6 +36,7 @@
       <module name="common-core" options="-parameters" />
       <module name="common-security" options="-parameters" />
       <module name="gateway" options="-parameters" />
+      <module name="log-service" options="-parameters" />
       <module name="mall-micro" options="" />
       <module name="notify-service" options="-parameters" />
       <module name="order-service" options="-parameters" />

@@ -52,3 +52,8 @@ seata:
       default: 127.0.0.1:8091   # 直连宿主机的8091端口
     vgroup-mapping:
       default_tx_group: default
+
+
+api:
+  log:
+    enabled: true
