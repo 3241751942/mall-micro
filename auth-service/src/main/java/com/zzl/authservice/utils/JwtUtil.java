@@ -16,9 +16,12 @@ import java.util.Date;
 @Component
 public class JwtUtil {
 
+
     @Value("${jwt.secret}")
     private String secret;
 
+
+    //taken有效期
     @Value("${jwt.expiration}")
     private Long expiration;
 

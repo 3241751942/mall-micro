@@ -11,6 +11,7 @@ import com.zzl.productservice.enums.ProductServiceBizErrorCode;
 import com.zzl.productservice.mapper.ProductMapper;
 import com.zzl.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -37,7 +38,17 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     //zhe种集合空的直接返回
     @Override
     @Transactional(readOnly = true)
+
+    @Cacheable(
+            value = "productPage",
+            key = "#request.pageNum + '_' + #request.pageSize + '_' + " +
+                    "#request.categoryId + '_' + #request.brandId + '_' + " +
+                    "#request.minPrice + '_' + #request.maxPrice + '_' + " +
+                    "#request.keyword + '_' + #request.sortBy + '_' + #request.order",
+            unless = "#result == null || #result.records.isEmpty()"
+    )
     public Page<ProductResponseDTO> pageQuery(ProductPageRequest request) {
+
         Page<ProductResponseDTO> page = new Page<>(request.getPageNum(), request.getPageSize());
         return productMapper.selectProductPage(
                 page,

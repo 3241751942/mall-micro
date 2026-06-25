@@ -59,12 +59,15 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
                         return exchange.getResponse().setComplete();
                     }
 
+
+                    //获取对象
                     // 转发用户信息
                     ServerHttpRequest newRequest = exchange.getRequest().mutate()
                             .header("X-User-Id", String.valueOf(verifyResult.getUserId()))
                             .header("X-User-Roles", verifyResult.getRoles())
                             .build();
 
+                    //把修改后的对象重新放进去
                     return chain.filter(exchange.mutate().request(newRequest).build());
                 })
                 .onErrorResume(e -> {

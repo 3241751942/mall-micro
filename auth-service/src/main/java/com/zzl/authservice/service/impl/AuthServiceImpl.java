@@ -31,7 +31,7 @@ public class AuthServiceImpl implements AuthService {
             throw new RuntimeException("账号或密码错误");
         }
 
-        // 2. 生成 JWT（用户角色可扩展，暂用默认 role）
+        // 2. 生成 JWT
         String roles = "ROLE_USER";   // 后续可从 user-service 获取真实角色
         String token = jwtUtil.generateToken(user.getId(), user.getUsername(), roles);
 
