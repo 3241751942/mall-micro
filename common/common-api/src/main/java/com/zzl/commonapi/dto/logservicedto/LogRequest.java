@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 public class LogRequest {
     private String traceId;
-    @NotBlank
+    @NotBlank(message="日志内容不能为空")
     private String logType;
     private Long userId;
     private String username;

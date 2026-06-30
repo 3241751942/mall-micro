@@ -11,6 +11,7 @@ import com.zzl.productservice.enums.ProductServiceBizErrorCode;
 import com.zzl.productservice.mapper.ProductMapper;
 import com.zzl.productservice.service.ProductService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,7 +39,6 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     //zhe种集合空的直接返回
     @Override
     @Transactional(readOnly = true)
-
     @Cacheable(
             value = "productPage",
             key = "#request.pageNum + '_' + #request.pageSize + '_' + " +
@@ -63,6 +63,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
     }
 
 
+    @CacheEvict(value = "productPage", allEntries = true)
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void createProduct(Product product) {
@@ -84,6 +85,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
     }
 
+    @CacheEvict(value = "productPage",allEntries = true)
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void updateProduct(Long productId, Product updateInfo) {
@@ -122,6 +124,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         }
     }
 
+    @CacheEvict(value = "productPage",allEntries = true)
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void deleteProduct(Long productId) {
@@ -132,6 +135,7 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, Product> impl
         // 注意：如果使用逻辑删除，removeById 会自动更新 deleted 字段
     }
 
+    @CacheEvict(value = "productPage",allEntries = true)
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void changeStatus(Long productId, Integer status) {

@@ -2,6 +2,7 @@ package com.zzl.gatewayservice.filter;
 
 import com.zzl.commonapi.dto.authservicedto.TokenVerifyResponse;
 import com.zzl.gatewayservice.config.GatewayWhitelistProperties;
+import com.zzl.gatewayservice.util.TokenCacheService;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.cloud.gateway.filter.GlobalFilter;
@@ -22,11 +23,14 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
     private final WebClient webClient;
     private final GatewayWhitelistProperties gatewayWhitelistProperties;
     private final AntPathMatcher pathMatcher = new AntPathMatcher();
+    private final TokenCacheService tokenCacheService;
 
     public JwtAuthenticationGlobalFilter(WebClient.Builder webClientBuilder,
-                                         GatewayWhitelistProperties gatewayWhitelistProperties) {
+                                         GatewayWhitelistProperties gatewayWhitelistProperties,
+                                         TokenCacheService tokenCacheService) {
         this.webClient = webClientBuilder.baseUrl("http://auth-service").build();
         this.gatewayWhitelistProperties = gatewayWhitelistProperties;
+        this.tokenCacheService = tokenCacheService;
     }
 
     @Override
@@ -46,6 +50,18 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
             return exchange.getResponse().setComplete();
         }
 
+        String token = authHeader.substring(7);
+
+        TokenVerifyResponse tokenVerifyResponse = tokenCacheService.verifyCacheToken(token);
+        if (tokenVerifyResponse != null) {
+            ServerHttpRequest newRequest =exchange.getRequest().mutate()
+                    .header("X-User-Id", String.valueOf(tokenVerifyResponse.getUserId()))
+                    .header("X-User-Roles", tokenVerifyResponse.getRoles())
+                    .build();
+
+            return chain.filter(exchange.mutate().request(newRequest).build());
+        }
+
         // 调用认证服务
         return webClient.post()
                 .uri("/internal/auth/verify")
@@ -59,6 +75,8 @@ public class JwtAuthenticationGlobalFilter implements GlobalFilter, Ordered {
                         return exchange.getResponse().setComplete();
                     }
 
+                    //缓存token；
+                    tokenCacheService.cacheToken(token,verifyResult);
 
                     //获取对象
                     // 转发用户信息

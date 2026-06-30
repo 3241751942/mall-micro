@@ -17,6 +17,7 @@ import com.zzl.orderservice.exception.OrderException;
 import com.zzl.orderservice.mapper.OrderItemMapper;
 import com.zzl.orderservice.mapper.OrderMapper;
 import com.zzl.orderservice.service.OrderService;
+import com.zzl.orderservice.util.NotificationSender;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.seata.spring.annotation.GlobalTransactional;
@@ -33,9 +34,6 @@ import java.util.stream.Collectors;
 
 /**
  * 订单服务实现类
- *
- * @author micro
- * @since 1.0.0
  */
 @Slf4j
 @Service
@@ -45,6 +43,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private final OrderItemMapper orderItemMapper;
     private final ProductFeignClient productFeignClient;
     private final StockFeignClient stockFeignClient;
+    private final NotificationSender sender;
 
     /**
      * 生成订单号（后面改成雪花算法）
@@ -183,6 +182,9 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 log.warn("解锁库存失败，订单号: {}, 商品: {}", orderNo, item.getProductId());
             }
         }
+
+        sender.sendNotification(userId,"订单取消","你的订单"+orderNo+"已经成功取消","abc");
+
         log.info("订单取消成功，订单号: {}", orderNo);
     }
 

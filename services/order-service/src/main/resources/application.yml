@@ -46,10 +46,10 @@ seata:
   enabled: true
   tx-service-group: default_tx_group
   registry:
-    type: file   # 改用 file 类型，不通过 Nacos 发现
+    type: file
   service:
     grouplist:
-      default: 127.0.0.1:8091   # 直连宿主机的8091端口
+      default: 127.0.0.1:8091
     vgroup-mapping:
       default_tx_group: default
 
@@ -57,3 +57,11 @@ seata:
 api:
   log:
     enabled: true
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: order-producer-group
+    send-message-timeout: 10000
+    retry-times-when-send-failed: 2
+    max-message-size: 4194304

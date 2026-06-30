@@ -9,6 +9,9 @@ import com.zzl.productservice.entity.CategoryTree;
 import com.zzl.productservice.enums.ProductServiceBizErrorCode;
 import com.zzl.productservice.mapper.CategoryMapper;
 import com.zzl.productservice.service.CategoryService;
+import net.bytebuddy.asm.Advice;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
@@ -27,6 +30,8 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
     /**
      * 获取整个分类树(最多三层)
      */
+    @Cacheable(value = "category")
+    @Transactional(readOnly = true)
     public List<CategoryTree> getCategoryTree() {
         // 1. 查询所有未删除、1-3级分类，并按排序号升序
         List<Category> categoryList = lambdaQuery()
@@ -95,6 +100,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      * 新增分类
      * @param category 分类信息
      */
+    @CacheEvict(value = "category")
     @Override
     @Transactional
     public void createCategory(Category category) {
@@ -137,6 +143,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      */
     @Override
     @Transactional
+    @CacheEvict(value = "category",allEntries = true)
     public void updateCategory(Long categoryId, Category category) {
         Category existing = getById(categoryId);
         if (existing == null) {
@@ -183,6 +190,7 @@ public class CategoryServiceImpl extends ServiceImpl<CategoryMapper, Category> i
      */
     @Override
     @Transactional
+    @CacheEvict(value = "category",allEntries = true)
     public void deleteCategory(Long categoryId) {
         Category category = getById(categoryId);
         if (category == null) {

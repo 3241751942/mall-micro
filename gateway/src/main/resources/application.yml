@@ -63,17 +63,31 @@ spring:
               predicates:
                 - Path=/api/search/**
 
-            # 9. 日志服务（新增）
+            # 9. 日志服务
             - id: log-service
               uri: lb://log-service
               predicates:
                 - Path=/api/logs/**
+
+             #.10 通知服务
+            - id: notify-service
+              uri: lb://notify-service
+              predicates:
+                - Path=/api/notifications/**,/api/css/**
+
 
     sentinel:
       transport:
         dashboard: localhost:8858
       filter:
         enabled: true
+
+
+  data:
+    redis:
+      database: 0
+      port: 6379
+      host: 127.0.0.1
 
 # 白名单路径（不需要认证）
 gateway:

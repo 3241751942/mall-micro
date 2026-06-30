@@ -1,0 +1,37 @@
+server:
+  port: 10000
+
+
+spring:
+  application:
+    name: notify-service
+
+  datasource:
+    username: root
+    password: 123456
+    url: jdbc:mysql://localhost:3306/notify_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  cloud:
+    nacos:
+      config:
+        enabled: false
+        server-addr: 127.0.0.1:8848
+        file-extension: yaml
+        namespace: public
+        username: nacos
+        password: nacos
+      discovery:
+        username: nacos
+        password: nacos
+        server-addr: 127.0.0.1:8848
+
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: notify-producer-group
+
