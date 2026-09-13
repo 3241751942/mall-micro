@@ -1,6 +1,7 @@
 package com.zzl.orderservice.service;
 
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.orderservice.dto.request.CreateOrderRequest;
 import com.zzl.orderservice.entity.Order;
 import com.zzl.orderservice.entity.OrderItem;
@@ -72,4 +73,12 @@ public interface OrderService {
     void setOrderStatus(Integer status, String orderNo);
 
     Long getOrderId(String orderNo);
+
+    /**
+     * 获取订单明细，准备去支付
+     * @param orderId 订单号
+     */
+    PayOrderDetail payOrder(Long orderId);
+
+    String getOrderNoByOrderId(Long  orderId);
 }

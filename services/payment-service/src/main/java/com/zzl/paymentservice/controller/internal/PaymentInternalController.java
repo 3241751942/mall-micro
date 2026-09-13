@@ -1,5 +1,6 @@
 package com.zzl.paymentservice.controller.internal;
 
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.commonapi.dto.paymentservicedto.PaymentFeignDTO;
 import com.zzl.commonapi.dto.paymentservicedto.PaymentFeignRequest;
 import com.zzl.paymentservice.converter.PaymentConverter;

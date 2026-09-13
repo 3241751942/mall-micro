@@ -16,6 +16,11 @@ import java.util.List;
 public class OrderResponse {
 
     /**
+     * 订单ID（数据库主键）
+     */
+    private Long id;
+
+    /**
      * 订单号
      */
     private String orderNo;

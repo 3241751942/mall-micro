@@ -1,15 +1,15 @@
 package com.zzl.commonapi.feign.orderservicefeign;
 
 import com.zzl.commonapi.dto.orderservicedto.PayCallbackRequest;
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.commonapi.feign.feignfallback.orderservice.OrderFeignFallbackFactory;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.*;
 
 import javax.xml.transform.Result;
 
 
-@FeignClient(name = "order-service", path = "/internal/orders", fallbackFactory = OrderFeignFallbackFactory.class)
+@FeignClient(name = "order-service", path = "/internal/orders",  fallbackFactory = OrderFeignFallbackFactory.class)
 public interface OrderFeignClient {
 
     /**
@@ -19,4 +19,10 @@ public interface OrderFeignClient {
      */
     @PostMapping("/pay-callback")
     Void payCallback(@RequestBody PayCallbackRequest request);
+
+    @GetMapping("/pay-order/{orderId}")
+    PayOrderDetail payOrder(@PathVariable("orderId") Long orderId);
+
+    @GetMapping("/orderNo/{OrderId}")
+    String getOrderNoByOrderId(@PathVariable("OrderId") Long orderId);
 }

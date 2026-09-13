@@ -2,16 +2,13 @@ package com.zzl.orderservice.controller.internal;
 
 
 import com.zzl.commonapi.dto.orderservicedto.PayCallbackRequest;
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.commoncore.result.Result;
 import com.zzl.orderservice.service.OrderService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-
+import org.springframework.web.bind.annotation.*;
 
 
 @RestController
@@ -28,8 +25,24 @@ public class InternalOrderController {
      * @return 成功响应
      */
     @PostMapping("/pay-callback")
-    public Result<Void> payCallback(@Valid @RequestBody PayCallbackRequest request) {
+    public Result<Void> payCallback(@RequestBody PayCallbackRequest request) {
         orderService.handlePayCallback(request.getOrderNo(), request.getStatus());
         return Result.success();
+    }
+
+    /**
+     * 获取订单的详细信息给支付服务
+     * @param orderId 订单id
+     * @return PayOrderDetail
+     */
+    @GetMapping("/pay-order/{orderId}")
+    public PayOrderDetail payOrder(@PathVariable("orderId") Long orderId){
+        return orderService.payOrder(orderId);
+    }
+
+
+    @GetMapping("/orderNo/{OrderId}")
+    public String getOrderNoByOrderId(@PathVariable("OrderId") Long orderId){
+        return orderService.getOrderNoByOrderId(orderId);
     }
 }

@@ -1,7 +1,9 @@
 package com.zzl.orderservice.entity;
 
 import com.baomidou.mybatisplus.annotation.*;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -14,6 +16,8 @@ import java.time.LocalDateTime;
  */
 @Data
 @TableName("order_item")
+@NoArgsConstructor
+@AllArgsConstructor
 public class OrderItem {
 
     /**

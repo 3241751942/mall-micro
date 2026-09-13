@@ -2,10 +2,14 @@ package com.zzl.commonapi.dto.orderservicedto;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Data
+@AllArgsConstructor
+@NoArgsConstructor
 public class PayCallbackRequest {
 
     /**
@@ -21,7 +25,12 @@ public class PayCallbackRequest {
     private Integer status;
 
     /**
-     * 支付流水号（可选）
+     * 支付流水号
      */
     private String payNo;
+
+    public PayCallbackRequest(String orderNo, Integer status) {
+        this.orderNo = orderNo;
+        this.status = status;
+    }
 }

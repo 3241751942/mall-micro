@@ -4,6 +4,8 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.zzl.commonapi.dto.orderservicedto.Item;
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.commonapi.dto.productservicedto.ProductInternalDTO;
 import com.zzl.commonapi.dto.stockservicedto.StockLockRequest;
 import com.zzl.commonapi.dto.stockservicedto.StockLockResult;
@@ -26,10 +28,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -215,6 +214,7 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
                 boolean confirmed = stockFeignClient.confirm(confirmRequest);
                 if (!confirmed) {
                     log.error("确认扣减库存失败，订单号: {}, 商品: {}", orderNo, item.getProductId());
+                    throw new RuntimeException("确认扣减库存失败，订单号: {}, 商品: {}"+ orderNo+ item.getProductId());
                 }
             }
             log.info("支付成功，订单号: {}", orderNo);
@@ -289,4 +289,57 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         }
         return order.getId();
     }
+
+
+    /**
+     * 由于是两张表存储，一张存储订单信息，一张订单包含物品的明细
+     * 先获取订单信息
+     * 然后再获取物品明细
+     * @param orderId
+     * @return 待会支付订单所需的信息
+     */
+    @Override
+    public PayOrderDetail payOrder(Long orderId) {
+        Order order= lambdaQuery().eq(Order::getId, orderId)
+                .one();
+        if(order==null){
+            throw new RuntimeException("订单不存在，支付失败，订单Id"+orderId);
+        }
+        List<OrderItem> items=orderItemMapper.selectList(
+                new LambdaQueryWrapper<OrderItem>().eq(OrderItem::getOrderNo,order.getOrderNo())
+        );
+
+        if(items==null || items.isEmpty()){
+            throw new RuntimeException("订单中物品为空，支付失败,订单号"+order.getOrderNo());
+        }
+
+        PayOrderDetail  payOrderDetail = new PayOrderDetail();
+        payOrderDetail.setOrderId(order.getId());
+        payOrderDetail.setOrderNo(order.getOrderNo());
+        payOrderDetail.setTotalAmount(order.getTotalAmount());
+
+        List<Item> items1= new ArrayList<>();
+        for(OrderItem item:items){
+            Item item1 =new Item();
+            item1.setItemName(item.getProductName());
+            item1.setQuantity(item.getQuantity());
+            item1.setPrice(item.getProductPrice());
+            item1.setItemId(item.getId());
+            items1.add(item1);
+        }
+
+        payOrderDetail.setItems(items1);
+        return payOrderDetail;
+    }
+
+    @Override
+    public String getOrderNoByOrderId(Long orderId) {
+        Order order =lambdaQuery().eq(Order::getId, orderId).one();
+        if(order == null){
+            throw new RuntimeException("订单不存在");
+        }
+        return order.getOrderNo();
+    }
+
+
 }

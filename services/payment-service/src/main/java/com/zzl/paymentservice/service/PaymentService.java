@@ -30,4 +30,17 @@ public interface PaymentService extends IService<Payment> {
      * @return 更新后的支付单实体
      */
     Payment mockPaySuccess(String paymentNo, String orderNo);
+
+
+    /**
+     * 支付宝沙箱支付
+     * @param paymentNo 支付号
+     * @param orderId 订单Id
+     * @return 支付结果
+     */
+    String aliPay(String paymentNo,Long orderId) throws Exception;
+
+
+    Boolean notify(String paymentNo);
+
 }

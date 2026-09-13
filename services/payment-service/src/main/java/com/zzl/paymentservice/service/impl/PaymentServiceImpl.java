@@ -3,10 +3,12 @@ package com.zzl.paymentservice.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.zzl.commonapi.dto.orderservicedto.PayCallbackRequest;
+import com.zzl.commonapi.dto.orderservicedto.PayOrderDetail;
 import com.zzl.commonapi.feign.orderservicefeign.OrderFeignClient;
 import com.zzl.paymentservice.entity.Payment;
 import com.zzl.paymentservice.exception.PaymentException;
 import com.zzl.paymentservice.mapper.PaymentMapper;
+import com.zzl.paymentservice.service.PayService;
 import com.zzl.paymentservice.service.PaymentService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -27,13 +29,13 @@ import java.util.UUID;
 public class PaymentServiceImpl extends ServiceImpl<PaymentMapper, Payment> implements PaymentService {
 
    private final OrderFeignClient orderFeignClient;
+   private final PayService  payService;
 
     /**
      * 创建支付单
      * 校验该订单是否已存在未完成的支付单
      * 生成唯一支付单号，初始状态为待支付
      * 保存到数据库
-     *
      * @return 保存后的支付单实体
      */
     @Override
@@ -81,7 +83,6 @@ public class PaymentServiceImpl extends ServiceImpl<PaymentMapper, Payment> impl
 
     /**
      * 根据支付单号查询支付单
-     *
      * @param paymentNo 支付单号
      * @return 支付单实体
      */
@@ -122,5 +123,62 @@ public class PaymentServiceImpl extends ServiceImpl<PaymentMapper, Payment> impl
 
         log.info("模拟支付成功，支付单号：{}", paymentNo);
         return payment;
+    }
+
+    @Override
+    @GlobalTransactional(rollbackFor = Exception.class)
+    public String aliPay(String paymentNo,Long orderId) throws Exception{
+
+        PayOrderDetail payOrderDetail = orderFeignClient.payOrder(orderId);
+
+        System.out.println(payOrderDetail);
+
+        String payForm =payService.aliPagePay(paymentNo,payOrderDetail.getItems(),payOrderDetail.getTotalAmount());
+
+        Payment payment = getByPaymentNo(paymentNo);
+        if (payment.getStatus() != 0) {
+            throw new RuntimeException("支付订单状态异常！");
+        }
+
+        System.out.println("开始支付"+payForm);
+   /**   payment.setStatus(1);
+        payment.setTransactionId("MOCK_" + System.currentTimeMillis());
+        payment.setPayTime(LocalDateTime.now());
+        updateById(payment);
+
+        log.info("支付宝支付成功，支付单号：{}", paymentNo);
+    */
+        return payForm;
+    }
+
+
+    /**
+     * 修改支付单状态，并且应该调用订单服务修改订单状态
+     * @param paymentNo 支付单号
+     */
+    @Override
+    @GlobalTransactional(rollbackFor = Exception.class)
+    public Boolean notify(String paymentNo) {
+        Payment payment = getByPaymentNo(paymentNo);
+
+        if(payment==null){
+            throw new RuntimeException("支付单不存在");
+        }
+
+        payment.setStatus(1);
+        payment.setTransactionId("MOCK_" + System.currentTimeMillis());
+        payment.setPayTime(LocalDateTime.now());
+
+        System.out.println("修改订单状态");
+        updateById(payment);
+
+
+        String orderNo=orderFeignClient.getOrderNoByOrderId(payment.getOrderId());
+
+        //调用feign修改订单状态
+        orderFeignClient.payCallback(new PayCallbackRequest(orderNo,1));
+
+
+        return true;
     }
 }
